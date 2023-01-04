@@ -25,12 +25,12 @@ ORDER BY 1, 2
 
 -- Country with the highest infection rate per population
 SELECT location, population,
-		MAX(total_cases_per_million) AS highest_infection_count_per_million,
-		MAX((total_cases_per_million * 1000)/population) AS highest_infection_rate
+		SUM(new_cases) AS infection_count,
+		ROUND((SUM(new_cases) / population) * 100, 2) AS infection_rate
 FROM Portfolio_SQL_Projects..covid_deaths
 WHERE continent IS NOT NULL
-GROUP BY population, location
-ORDER BY highest_infection_rate DESC
+GROUP BY location, population
+ORDER BY infection_rate DESC
 
 
 -- Which countries have the highest death count since Covid happened
@@ -40,6 +40,14 @@ FROM Portfolio_SQL_Projects..covid_deaths
 WHERE continent IS NOT NULL
 GROUP BY location, population
 ORDER BY total_deaths_count DESC
+
+-- Total death count by continent
+SELECT continent, SUM(new_deaths) as total_deaths_count
+FROM Portfolio_SQL_Projects..covid_deaths
+WHERE continent IS NOT NULL
+GROUP BY continent
+ORDER BY total_deaths_count DESC
+
 
 -- Which continent has the highest death rate
 SELECT continent, MAX(total_deaths) as total_deaths_count
